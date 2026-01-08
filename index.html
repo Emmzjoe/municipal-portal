@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Okahandja Municipality - Resident Portal</title>
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="alternate icon" href="assets/images/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?v=12">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-visual">
+                <div class="login-visual-content">
+                    <img src="assets/images/cropped-cropped-okh-scaled-1-225x300.jpg" alt="Okahandja Municipality Logo" style="width: 120px; height: auto; margin-bottom: 1.5rem;">
+                    <h2>OKAHANDJA</h2>
+                    <p>Municipality Resident Portal</p>
+                </div>
+            </div>
+            <div class="login-form-container">
+                <h3>Welcome Back</h3>
+                <p>Sign in to access your account</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="accountNumber">Account Number</label>
+                        <input type="text" id="accountNumber" placeholder="Enter your account number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Sign In</button>
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <a href="#" onclick="showPasswordResetModal(); return false;" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+                    </div>
+                </form>
+                <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0;">
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">Don't have an account?</p>
+                    <button type="button" onclick="showRegisterModal()" class="register-link-btn">Create Account</button>
+                </div>
+                <!-- Demo credentials removed for security - Contact administrator for test accounts -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal-overlay hidden">
+        <div class="modal register-modal">
+            <div class="modal-header">
+                <h3>Create New Account</h3>
+                <button class="close-modal" onclick="closeRegisterModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #666; margin-bottom: 1.5rem;">Register for online access to manage your municipal services</p>
+                <form id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regAccountNumber">Account Number <span style="color: red;">*</span></label>
+                            <input type="text" id="regAccountNumber" placeholder="Enter your account number" required minlength="8" maxlength="50">
+                            <small>8-50 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="regEmail">Email Address <span style="color: red;">*</span></label>
+                            <input type="email" id="regEmail" placeholder="your.email@example.com" required>
+                            <small>We'll send a verification link</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regName">Full Name <span style="color: red;">*</span></label>
+                            <input type="text" id="regName" placeholder="John Doe" required minlength="2" maxlength="255">
+                        </div>
+                        <div class="form-group">
+                            <label for="regFirstName">First Name <span style="color: red;">*</span></label>
+                            <input type="text" id="regFirstName" placeholder="John" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regPhone">Phone Number <span style="color: red;">*</span></label>
+                            <input type="tel" id="regPhone" placeholder="+264811234567" required pattern="^\+?[0-9]{10,15}$">
+                            <small>Format: +264811234567</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="regPropertyType">Property Type</label>
+                            <select id="regPropertyType">
+                                <option value="Residential">Residential</option>
+                                <option value="Commercial">Commercial</option>
+                                <option value="Industrial">Industrial</option>
+                                <option value="Government">Government</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regAddress">Physical Address</label>
+                        <textarea id="regAddress" placeholder="123 Main Street, Okahandja" rows="2" maxlength="500"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regPassword">Password <span style="color: red;">*</span></label>
+                            <input type="password" id="regPassword" placeholder="Create a strong password" required minlength="8">
+                            <small>Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character (!@#$%...)</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="regConfirmPassword">Confirm Password <span style="color: red;">*</span></label>
+                            <input type="password" id="regConfirmPassword" placeholder="Re-enter password" required>
+                        </div>
+                    </div>
+
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar">
+                            <div class="strength-bar-fill" id="strengthBarFill"></div>
+                        </div>
+                        <span id="strengthText">Password strength: Weak</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label style="display: flex; align-items: start; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="regTerms" required style="margin-top: 0.25rem;">
+                            <span style="font-size: 0.9rem;">I agree to the <a href="#" style="color: var(--primary);">Terms of Service</a> and <a href="#" style="color: var(--primary);">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <div class="modal-actions" style="margin-top: 1.5rem;">
+                        <button type="button" class="btn-secondary" onclick="closeRegisterModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Create Account</button>
+                    </div>
+
+                    <div id="registerError" class="error-message hidden"></div>
+                    <div id="registerSuccess" class="success-message hidden"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardScreen" class="hidden">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <img src="assets/images/cropped-cropped-okh-scaled-1-225x300.jpg" alt="Okahandja Municipality Coat of Arms" class="logo-icon-img">
+                        <div class="logo-text">
+                            <h1>OKAHANDJA</h1>
+                            <p>Municipality Portal</p>
+                        </div>
+                    </div>
+                    <div class="user-info">
+                        <button class="icon-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
+                        <button class="icon-btn notification-btn" onclick="toggleNotifications()" title="Notifications">
+                            🔔
+                            <span class="notification-badge" id="notificationBadge">3</span>
+                        </button>
+                        <div class="user-avatar" id="userAvatar">JD</div>
+                        <div>
+                            <div style="font-weight: 600;" id="userName">John Doe</div>
+                            <div style="font-size: 0.85rem; opacity: 0.8;" id="userAccount">A/C: 12345678</div>
+                        </div>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container dashboard">
+            <div class="welcome-banner">
+                <h2>Welcome Back, <span id="welcomeName">John</span>!</h2>
+                <p>Manage your municipal services and stay up to date with your account</p>
+            </div>
+
+            <!-- Notifications Panel -->
+            <div id="notificationPanel" class="notification-panel hidden">
+                <div class="notification-header">
+                    <h3>Notifications</h3>
+                    <button class="close-btn" onclick="toggleNotifications()">×</button>
+                </div>
+                <div class="notification-list">
+                    <div class="notification-item unread">
+                        <div class="notification-icon">⚠️</div>
+                        <div class="notification-content">
+                            <h4>Electricity Bill Overdue</h4>
+                            <p>Your electricity bill of N$ 1,785.50 is overdue. Please pay to avoid service interruption.</p>
+                            <span class="notification-time">2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item unread">
+                        <div class="notification-icon">💧</div>
+                        <div class="notification-content">
+                            <h4>High Water Usage Alert</h4>
+                            <p>Your water consumption is 25% higher than last month. Check for leaks.</p>
+                            <span class="notification-time">1 day ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">✅</div>
+                        <div class="notification-content">
+                            <h4>Payment Received</h4>
+                            <p>Thank you for your water bill payment of N$ 1,180.00</p>
+                            <span class="notification-time">3 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-info">
+                <h3>Account Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Account Number</span>
+                        <span class="info-value" id="dashAccountNumber">12345678</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Property Address</span>
+                        <span class="info-value">123 Main Street, Okahandja</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Property Type</span>
+                        <span class="info-value">Residential</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Status</span>
+                        <span class="info-value" style="color: var(--success);">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Analytics -->
+            <div class="analytics-section">
+                <h3>Usage Analytics</h3>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h4>💧 Water Consumption Trend</h4>
+                        <canvas id="waterChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>⚡ Electricity Usage Trend</h4>
+                        <canvas id="electricityChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card" style="margin-top: 1.5rem;">
+                    <h4>📊 Monthly Spending Overview</h4>
+                    <canvas id="spendingChart"></canvas>
+                </div>
+            </div>
+
+            <div class="quick-statements">
+                <h3>Quick Access - Statements</h3>
+                <div class="statements-grid">
+                    <div class="statement-card" onclick="openStatements('Water')">
+                        <div class="statement-card-icon">💧</div>
+                        <h4>Water</h4>
+                        <p>View statements</p>
+                    </div>
+                    <div class="statement-card" onclick="openStatements('Electricity')">
+                        <div class="statement-card-icon">⚡</div>
+                        <h4>Electricity</h4>
+                        <p>View statements</p>
+                    </div>
+                    <div class="statement-card" onclick="openStatements('Property Rates')">
+                        <div class="statement-card-icon">🏠</div>
+                        <h4>Property Rates</h4>
+                        <p>View statements</p>
+                    </div>
+                    <div class="statement-card" onclick="openStatements('Refuse')">
+                        <div class="statement-card-icon">🗑️</div>
+                        <h4>Refuse</h4>
+                        <p>View statements</p>
+                    </div>
+                    <div class="statement-card" onclick="openStatements('Consolidated')">
+                        <div class="statement-card-icon">📄</div>
+                        <h4>Consolidated</h4>
+                        <p>All services</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bills-section">
+                <div class="section-header">
+                    <h3>Outstanding Bills</h3>
+                    <div class="total-outstanding">
+                        Total: N$ <span id="totalOutstanding">4,853.50</span>
+                    </div>
+                </div>
+
+                <div class="bills-grid">
+                    <!-- Water Bill -->
+                    <div class="bill-card water">
+                        <div class="bill-header">
+                            <div class="bill-type">
+                                <div class="bill-icon">💧</div>
+                                <h4>Water</h4>
+                            </div>
+                            <span class="status-badge due-soon">Due Soon</span>
+                        </div>
+                        <div class="bill-details">
+                            <div class="bill-row">
+                                <span>Current Reading:</span>
+                                <span>1,247 m³</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Previous Reading:</span>
+                                <span>1,215 m³</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Usage:</span>
+                                <span>32 m³</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Due Date:</span>
+                                <span>20 Dec 2025</span>
+                            </div>
+                        </div>
+                        <div class="bill-amount">N$ 1,245.00</div>
+                        <div class="bill-actions">
+                            <button class="btn btn-primary" onclick="payBill('Water')">Pay Now</button>
+                            <button class="btn btn-secondary" onclick="openStatements('Water')">Statement</button>
+                        </div>
+                    </div>
+
+                    <!-- Electricity Bill -->
+                    <div class="bill-card electricity">
+                        <div class="bill-header">
+                            <div class="bill-type">
+                                <div class="bill-icon">⚡</div>
+                                <h4>Electricity</h4>
+                            </div>
+                            <span class="status-badge overdue">Overdue</span>
+                        </div>
+                        <div class="bill-details">
+                            <div class="bill-row">
+                                <span>Current Reading:</span>
+                                <span>5,482 kWh</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Previous Reading:</span>
+                                <span>5,125 kWh</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Usage:</span>
+                                <span>357 kWh</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Due Date:</span>
+                                <span style="color: var(--danger);">10 Dec 2025</span>
+                            </div>
+                        </div>
+                        <div class="bill-amount" style="color: var(--danger);">N$ 1,785.50</div>
+                        <div class="bill-actions">
+                            <button class="btn btn-primary" onclick="payBill('Electricity')">Pay Now</button>
+                            <button class="btn btn-secondary" onclick="openStatements('Electricity')">Statement</button>
+                        </div>
+                    </div>
+
+                    <!-- Property Rates -->
+                    <div class="bill-card rates">
+                        <div class="bill-header">
+                            <div class="bill-type">
+                                <div class="bill-icon">🏠</div>
+                                <h4>Property Rates</h4>
+                            </div>
+                            <span class="status-badge due-soon">Due Soon</span>
+                        </div>
+                        <div class="bill-details">
+                            <div class="bill-row">
+                                <span>Property Value:</span>
+                                <span>N$ 850,000</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Rate:</span>
+                                <span>0.15%</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Period:</span>
+                                <span>Dec 2025</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Due Date:</span>
+                                <span>31 Dec 2025</span>
+                            </div>
+                        </div>
+                        <div class="bill-amount">N$ 1,275.00</div>
+                        <div class="bill-actions">
+                            <button class="btn btn-primary" onclick="payBill('Property Rates')">Pay Now</button>
+                            <button class="btn btn-secondary" onclick="openStatements('Property Rates')">Statement</button>
+                        </div>
+                    </div>
+
+                    <!-- Refuse Collection -->
+                    <div class="bill-card refuse">
+                        <div class="bill-header">
+                            <div class="bill-type">
+                                <div class="bill-icon">🗑️</div>
+                                <h4>Refuse Collection</h4>
+                            </div>
+                            <span class="status-badge due-soon">Due Soon</span>
+                        </div>
+                        <div class="bill-details">
+                            <div class="bill-row">
+                                <span>Service Type:</span>
+                                <span>Residential</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Collection Days:</span>
+                                <span>Mon & Thu</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Period:</span>
+                                <span>Dec 2025</span>
+                            </div>
+                            <div class="bill-row">
+                                <span>Due Date:</span>
+                                <span>25 Dec 2025</span>
+                            </div>
+                        </div>
+                        <div class="bill-amount">N$ 548.00</div>
+                        <div class="bill-actions">
+                            <button class="btn btn-primary" onclick="payBill('Refuse Collection')">Pay Now</button>
+                            <button class="btn btn-secondary" onclick="openStatements('Refuse')">Statement</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-history">
+                <h3>Recent Payment History</h3>
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Reference</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Nov 28, 2025</td>
+                            <td>Water</td>
+                            <td>PAY-2025-1128-001</td>
+                            <td>N$ 1,180.00</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>Nov 25, 2025</td>
+                            <td>Refuse Collection</td>
+                            <td>PAY-2025-1125-002</td>
+                            <td>N$ 548.00</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>Nov 10, 2025</td>
+                            <td>Electricity</td>
+                            <td>PAY-2025-1110-003</td>
+                            <td>N$ 1,650.00</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>Oct 30, 2025</td>
+                            <td>Property Rates</td>
+                            <td>PAY-2025-1030-004</td>
+                            <td>N$ 1,275.00</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>Oct 28, 2025</td>
+                            <td>Water</td>
+                            <td>PAY-2025-1028-005</td>
+                            <td>N$ 1,125.00</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Service Requests -->
+            <div class="service-requests">
+                <div class="section-header">
+                    <h3>Service Requests</h3>
+                    <button class="btn btn-primary" onclick="showServiceRequestModal()">+ New Request</button>
+                </div>
+                <div class="requests-grid">
+                    <div class="request-card">
+                        <div class="request-header">
+                            <span class="request-id">#SR-2025-001</span>
+                            <span class="status-badge due-soon">In Progress</span>
+                        </div>
+                        <h4>Water Leak Report</h4>
+                        <p>Leaking pipe near meter box</p>
+                        <div class="request-footer">
+                            <span>Submitted: Dec 10, 2025</span>
+                            <span>Priority: High</span>
+                        </div>
+                    </div>
+                    <div class="request-card">
+                        <div class="request-header">
+                            <span class="request-id">#SR-2025-002</span>
+                            <span class="status-badge paid">Completed</span>
+                        </div>
+                        <h4>Meter Reading Issue</h4>
+                        <p>Incorrect electricity meter reading</p>
+                        <div class="request-footer">
+                            <span>Submitted: Nov 28, 2025</span>
+                            <span>Priority: Medium</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Plans -->
+            <div class="payment-plans">
+                <div class="section-header">
+                    <h3>Payment Plans</h3>
+                    <button class="btn btn-secondary" onclick="showPaymentPlanModal()">Setup New Plan</button>
+                </div>
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h4>Active Payment Plan</h4>
+                        <span class="status-badge due-soon">Active</span>
+                    </div>
+                    <div class="plan-details">
+                        <div class="plan-row">
+                            <span>Total Amount:</span>
+                            <span style="font-weight: 700;">N$ 4,853.50</span>
+                        </div>
+                        <div class="plan-row">
+                            <span>Monthly Installment:</span>
+                            <span style="font-weight: 700;">N$ 1,213.38</span>
+                        </div>
+                        <div class="plan-row">
+                            <span>Duration:</span>
+                            <span>4 months</span>
+                        </div>
+                        <div class="plan-row">
+                            <span>Next Payment:</span>
+                            <span>Dec 20, 2025</span>
+                        </div>
+                    </div>
+                    <div class="plan-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 25%;"></div>
+                        </div>
+                        <span class="progress-text">1 of 4 payments completed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statement Modal -->
+    <div id="statementModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="statementTitle">Water Statement</h3>
+                <button class="close-modal" onclick="closeStatements()">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Period Selector -->
+                <div class="statement-selector" id="periodSelector">
+                    <div class="statement-period active" onclick="selectPeriod('current', this)">
+                        <h4>Dec 2025</h4>
+                        <p>Current Period</p>
+                    </div>
+                    <div class="statement-period" onclick="selectPeriod('nov2025', this)">
+                        <h4>Nov 2025</h4>
+                        <p>Previous Period</p>
+                    </div>
+                    <div class="statement-period" onclick="selectPeriod('oct2025', this)">
+                        <h4>Oct 2025</h4>
+                        <p>2 Months Ago</p>
+                    </div>
+                    <div class="statement-period" onclick="selectPeriod('sep2025', this)">
+                        <h4>Sep 2025</h4>
+                        <p>3 Months Ago</p>
+                    </div>
+                </div>
+
+                <!-- Statement Content -->
+                <div id="statementContent">
+                    <!-- This will be dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>Okahandja Municipality</h3>
+                        <p>Serving our community with excellence and transparency</p>
+                        <div class="footer-logo">
+                            <img src="assets/images/cropped-cropped-okh-scaled-1-225x300.jpg" alt="Okahandja Municipality Coat of Arms" style="height: 80px;">
+                        </div>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Contact Us</h4>
+                        <p><strong>📍 Address:</strong><br>
+                        Voortrekker Street<br>
+                        Okahandja, Namibia</p>
+                        <p><strong>📞 Phone:</strong> +264 62 503 000</p>
+                        <p><strong>📧 Email:</strong> info@okahandja.gov.na</p>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Office Hours</h4>
+                        <p><strong>Monday - Friday:</strong><br>
+                        08:00 AM - 17:00 PM</p>
+                        <p><strong>Lunch Break:</strong><br>
+                        13:00 PM - 14:00 PM</p>
+                        <p><strong>Weekends:</strong> Closed</p>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Follow Us</h4>
+                        <div class="social-links">
+                            <a href="https://facebook.com/okahandjamunicipality" target="_blank" title="Facebook" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                            </a>
+                            <a href="https://twitter.com/okahandja_mun" target="_blank" title="Twitter/X" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </a>
+                            <a href="https://instagram.com/okahandja_municipality" target="_blank" title="Instagram" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </a>
+                            <a href="mailto:info@okahandja.gov.na" title="Email" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Okahandja Municipality. All rights reserved.</p>
+                    <p>Developed with Claude Code</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboardScreen" class="hidden">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <img src="assets/images/cropped-cropped-okh-scaled-1-225x300.jpg" alt="Okahandja Municipality Coat of Arms" class="logo-icon-img">
+                        <div class="logo-text">
+                            <h1>OKAHANDJA</h1>
+                            <p>Admin Portal</p>
+                        </div>
+                    </div>
+                    <div class="user-info">
+                        <button class="icon-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
+                        <div class="user-avatar" id="adminUserAvatar">A</div>
+                        <div>
+                            <div style="font-weight: 600;" id="adminUserName">Administrator</div>
+                            <div style="font-size: 0.85rem; opacity: 0.8;">Admin Access</div>
+                        </div>
+                        <button class="logout-btn" onclick="adminLogout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container dashboard">
+            <div class="welcome-banner">
+                <h2>Admin Dashboard</h2>
+                <p>Manage municipal services, users, and billing</p>
+            </div>
+
+            <!-- Statistics Overview -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <h3 id="totalUsers">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <h3 id="totalRevenue">N$ 0</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-content">
+                        <h3 id="totalOutstandingAdmin">N$ 0</h3>
+                        <p>Outstanding Bills</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <h3 id="totalPayments">0</h3>
+                        <p>Payments This Month</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('users')">Users</button>
+                <button class="admin-tab" onclick="switchAdminTab('bills')">Bills</button>
+                <button class="admin-tab" onclick="switchAdminTab('serviceRequests')">Service Requests</button>
+                <button class="admin-tab" onclick="switchAdminTab('reports')">Reports</button>
+                <button class="admin-tab" onclick="switchAdminTab('activity')">Activity Log</button>
+                <button class="admin-tab" onclick="switchAdminTab('settings')">Settings</button>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="adminUsersTab" class="admin-tab-content">
+                <div class="section-header">
+                    <h3>User Management</h3>
+                    <button class="btn btn-primary" onclick="showAddUserModal()">+ Add New User</button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="userSearch" placeholder="Search users by account number or name..." onkeyup="searchUsers()">
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Account Number</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>Property Type</th>
+                            <th>Outstanding</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bills Tab -->
+            <div id="adminBillsTab" class="admin-tab-content hidden">
+                <div class="section-header">
+                    <h3>Bill Management</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-primary" onclick="bulkSendReminders()">📧 Send Reminders</button>
+                        <button class="btn btn-secondary" onclick="exportBills()">📥 Export CSV</button>
+                        <button class="btn btn-secondary" onclick="exportBillsPDF()">📄 Export PDF</button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <select id="serviceFilter" onchange="filterBills()">
+                        <option value="all">All Services</option>
+                        <option value="water">Water</option>
+                        <option value="electricity">Electricity</option>
+                        <option value="rates">Property Rates</option>
+                        <option value="refuse">Refuse</option>
+                    </select>
+                    <select id="statusFilter" onchange="filterBills()">
+                        <option value="all">All Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="due-soon">Due Soon</option>
+                    </select>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>Name</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="billsTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Service Requests Tab -->
+            <div id="adminServiceRequestsTab" class="admin-tab-content hidden">
+                <div class="section-header">
+                    <h3>Service Requests Management</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="requestStatusFilter" onchange="filterServiceRequests()">
+                            <option value="">All Status</option>
+                            <option value="Open">Open</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                        <select id="requestCategoryFilter" onchange="filterServiceRequests()">
+                            <option value="">All Categories</option>
+                            <option value="Water">Water</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Billing">Billing</option>
+                            <option value="Infrastructure">Infrastructure</option>
+                            <option value="Refuse">Refuse</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Account</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceRequestsTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="adminReportsTab" class="admin-tab-content hidden">
+                <div class="section-header">
+                    <h3>Revenue Reports & Analytics</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="reportPeriod" onchange="updateCharts()">
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportReportsCSV()">📥 Export CSV</button>
+                        <button class="btn btn-secondary" onclick="exportReportsPDF()">📄 Export PDF</button>
+                    </div>
+                </div>
+
+                <div class="report-cards">
+                    <div class="report-card">
+                        <h4>💧 Water Revenue</h4>
+                        <p class="report-amount" id="waterRevenue">N$ 0</p>
+                    </div>
+                    <div class="report-card">
+                        <h4>⚡ Electricity Revenue</h4>
+                        <p class="report-amount" id="electricityRevenue">N$ 0</p>
+                    </div>
+                    <div class="report-card">
+                        <h4>🏠 Property Rates Revenue</h4>
+                        <p class="report-amount" id="ratesRevenue">N$ 0</p>
+                    </div>
+                    <div class="report-card">
+                        <h4>🗑️ Refuse Revenue</h4>
+                        <p class="report-amount" id="refuseRevenue">N$ 0</p>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h4>Revenue by Service Type</h4>
+                        <canvas id="revenueByServiceChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Monthly Revenue Trends</h4>
+                        <canvas id="monthlyTrendsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="payment-history">
+                    <h3>Recent Transactions</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Account</th>
+                                <th>Service</th>
+                                <th>Amount</th>
+                                <th>Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Activity Log Tab -->
+            <div id="adminActivityTab" class="admin-tab-content hidden">
+                <div class="section-header">
+                    <h3>Activity Log & Audit Trail</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="date" id="activityStartDate" class="filter-input">
+                        <input type="date" id="activityEndDate" class="filter-input">
+                        <button class="btn btn-secondary" onclick="filterActivityLog()">Filter</button>
+                    </div>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityLogBody">
+                        <tr>
+                            <td>Dec 14, 2025 10:30 AM</td>
+                            <td>admin</td>
+                            <td><span class="action-badge">Bill Update</span></td>
+                            <td>Marked electricity bill as paid for account 87654321</td>
+                            <td>192.168.1.1</td>
+                        </tr>
+                        <tr>
+                            <td>Dec 14, 2025 10:15 AM</td>
+                            <td>12345678</td>
+                            <td><span class="action-badge">Login</span></td>
+                            <td>User logged in successfully</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                        <tr>
+                            <td>Dec 14, 2025 09:45 AM</td>
+                            <td>admin</td>
+                            <td><span class="action-badge">User Created</span></td>
+                            <td>New user added: 11223344 (David Johnson)</td>
+                            <td>192.168.1.1</td>
+                        </tr>
+                        <tr>
+                            <td>Dec 13, 2025 04:20 PM</td>
+                            <td>87654321</td>
+                            <td><span class="action-badge">Payment</span></td>
+                            <td>Payment received: N$ 1,450.00 for Electricity</td>
+                            <td>192.168.1.101</td>
+                        </tr>
+                        <tr>
+                            <td>Dec 13, 2025 02:15 PM</td>
+                            <td>admin</td>
+                            <td><span class="action-badge">Settings</span></td>
+                            <td>Updated water rate to N$ 38.91/m³</td>
+                            <td>192.168.1.1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="adminSettingsTab" class="admin-tab-content hidden">
+                <h3>System Settings</h3>
+
+                <div class="settings-section">
+                    <h4>Service Rates</h4>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <label>Water Rate (per m³)</label>
+                            <input type="number" value="38.91" step="0.01">
+                        </div>
+                        <div class="setting-item">
+                            <label>Electricity Rate (per kWh)</label>
+                            <input type="number" value="5.00" step="0.01">
+                        </div>
+                        <div class="setting-item">
+                            <label>Property Rate (%)</label>
+                            <input type="number" value="0.15" step="0.01">
+                        </div>
+                        <div class="setting-item">
+                            <label>Refuse Collection Fee</label>
+                            <input type="number" value="548.00" step="0.01">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Notification Settings</h4>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" checked> Send email reminders for due bills
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" checked> Send overdue notifications
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Request Modal -->
+    <div id="serviceRequestModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Submit Service Request</h3>
+                <button class="close-modal" onclick="closeServiceRequestModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="serviceRequestForm">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="requestCategory" required>
+                            <option value="">Select category...</option>
+                            <option value="Water">Water</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Billing">Billing</option>
+                            <option value="Infrastructure">Infrastructure</option>
+                            <option value="Refuse">Refuse</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Request Type</label>
+                        <input type="text" id="requestType" placeholder="e.g., Water Leak, Meter Issue" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="requestPriority" required>
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="requestDescription" rows="4" placeholder="Please describe the issue in detail..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Location/Address</label>
+                        <input type="text" id="requestLocation" placeholder="Specific location of the issue" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Plan Modal -->
+    <div id="paymentPlanModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Setup Payment Plan</h3>
+                <button class="close-modal" onclick="closePaymentPlanModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentPlanForm">
+                    <div class="form-group">
+                        <label>Total Amount</label>
+                        <input type="number" id="planAmount" value="4853.50" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (Months)</label>
+                        <select id="planDuration" onchange="calculateInstallment()" required>
+                            <option value="3">3 Months</option>
+                            <option value="4" selected>4 Months</option>
+                            <option value="6">6 Months</option>
+                            <option value="12">12 Months</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Installment</label>
+                        <input type="text" id="planInstallment" value="N$ 1,213.38" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>First Payment Date</label>
+                        <input type="date" id="planStartDate" required>
+                    </div>
+                    <div class="alert-info">
+                        <p>📋 By setting up a payment plan, you agree to make regular monthly payments. Late payments may incur penalties.</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Confirm Payment Plan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="passwordResetModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Reset Password</h3>
+                <button class="close-modal" onclick="closePasswordResetModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="passwordResetForm">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="newPassword" minlength="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="confirmPassword" minlength="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="enable2FA">
+                            Enable Two-Factor Authentication (2FA)
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Add New User</h3>
+                <button class="close-modal" onclick="closeAddUserModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label>Account Number</label>
+                        <input type="text" id="newAccountNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="newUserName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="newUserAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Property Type</label>
+                        <select id="newPropertyType">
+                            <option value="Residential">Residential</option>
+                            <option value="Commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="newUserPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Gateway Modal -->
+    <div id="paymentModal" class="modal-overlay hidden">
+        <div class="modal payment-modal">
+            <div class="modal-header">
+                <h3>💳 Complete Payment</h3>
+                <button class="close-modal" onclick="closePaymentModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Payment Summary -->
+                <div class="payment-summary">
+                    <div class="payment-summary-row">
+                        <span>Service:</span>
+                        <span id="paymentService" style="font-weight: 700;">Water</span>
+                    </div>
+                    <div class="payment-summary-row">
+                        <span>Amount:</span>
+                        <span id="paymentAmount" style="font-weight: 700; color: var(--primary); font-size: 1.2rem;">N$ 1,245.00</span>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <h4 style="margin: 1.5rem 0 1rem 0;">Select Payment Method</h4>
+                <div id="paymentMethodsList" class="payment-methods-list">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <!-- Nam Post Form -->
+                <div id="nampostForm" class="payment-method-form hidden">
+                    <h4>📱 Nam Post Mobile Money</h4>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="nampostPhone" placeholder="081 234 5678" maxlength="12" required>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">
+                        You will receive an SMS prompt to approve this payment
+                    </p>
+                </div>
+
+                <!-- Bank Transfer Form -->
+                <div id="banktransferForm" class="payment-method-form hidden">
+                    <h4>🏦 Bank Transfer</h4>
+                    <div class="form-group">
+                        <label>Select Bank</label>
+                        <select id="bankName" required>
+                            <option value="">Choose your bank...</option>
+                            <option value="FNB Namibia">FNB Namibia</option>
+                            <option value="Bank Windhoek">Bank Windhoek</option>
+                            <option value="Standard Bank">Standard Bank</option>
+                            <option value="Nedbank">Nedbank</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Number</label>
+                        <input type="text" id="bankAccountNumber" placeholder="Your account number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Holder Name</label>
+                        <input type="text" id="bankAccountHolder" placeholder="As per bank records" required>
+                    </div>
+                </div>
+
+                <!-- Card Payment Form -->
+                <div id="cardForm" class="payment-method-form hidden">
+                    <h4>💳 Card Payment</h4>
+                    <div class="form-group">
+                        <label>Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cardholder Name</label>
+                        <input type="text" id="cardName" placeholder="Name on card" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Expiry Date</label>
+                            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text" id="cardCVV" placeholder="123" maxlength="3" oninput="restrictCVV(this)" required>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='25'%3E%3Crect fill='%231A1F71' width='40' height='25' rx='3'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='10' text-anchor='middle' dy='.3em'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='25'%3E%3Crect fill='%23EB001B' width='20' height='25' rx='3'/%3E%3Crect fill='%23F79E1B' x='20' width='20' height='25' rx='3'/%3E%3C/svg%3E" alt="Mastercard">
+                    </div>
+                </div>
+
+                <!-- Mobile Money Form -->
+                <div id="mobilemoneyForm" class="payment-method-form hidden">
+                    <h4>📲 Mobile Money</h4>
+                    <div class="form-group">
+                        <label>Mobile Provider</label>
+                        <select id="mobileProvider" required>
+                            <option value="">Select provider...</option>
+                            <option value="MTC">MTC Mobile Money</option>
+                            <option value="TN Mobile">TN Mobile</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="mobilePhone" placeholder="081 234 5678" maxlength="12" required>
+                    </div>
+                </div>
+
+                <!-- Cash Payment Info -->
+                <div id="cashForm" class="payment-method-form hidden">
+                    <h4>💵 Cash Payment</h4>
+                    <div class="alert-info" style="margin: 1rem 0;">
+                        <p>📍 A payment slip will be generated. Please bring it to any Okahandja Municipality office.</p>
+                        <p style="margin-top: 0.5rem;"><strong>Office Hours:</strong> Monday - Friday, 8:00 AM - 4:30 PM</p>
+                        <p style="margin-top: 0.5rem;"><strong>Location:</strong> Voortrekker Street, Okahandja</p>
+                    </div>
+                </div>
+
+                <!-- Processing Indicator -->
+                <div id="paymentProcessing" class="payment-processing hidden">
+                    <div class="loading-spinner"></div>
+                    <p>Processing your payment...</p>
+                </div>
+
+                <!-- Proceed Button -->
+                <button id="proceedPaymentBtn" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;" onclick="proceedWithPayment()" class="hidden">
+                    Complete Payment
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>Okahandja Municipality</h3>
+                        <p>Serving our community with excellence and transparency</p>
+                        <div class="footer-logo">
+                            <img src="assets/images/cropped-cropped-okh-scaled-1-225x300.jpg" alt="Okahandja Municipality Coat of Arms" style="height: 80px;">
+                        </div>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Contact Us</h4>
+                        <p><strong>📍 Address:</strong><br>
+                        Voortrekker Street<br>
+                        Okahandja, Namibia</p>
+                        <p><strong>📞 Phone:</strong> +264 62 503 000</p>
+                        <p><strong>📧 Email:</strong> info@okahandja.gov.na</p>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Office Hours</h4>
+                        <p><strong>Monday - Friday:</strong><br>
+                        08:00 AM - 17:00 PM</p>
+                        <p><strong>Lunch Break:</strong><br>
+                        13:00 PM - 14:00 PM</p>
+                        <p><strong>Weekends:</strong> Closed</p>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Follow Us</h4>
+                        <div class="social-links">
+                            <a href="https://facebook.com/okahandjamunicipality" target="_blank" title="Facebook" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                            </a>
+                            <a href="https://twitter.com/okahandja_mun" target="_blank" title="Twitter/X" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </a>
+                            <a href="https://instagram.com/okahandja_municipality" target="_blank" title="Instagram" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </a>
+                            <a href="mailto:info@okahandja.gov.na" title="Email" class="social-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Okahandja Municipality. All rights reserved.</p>
+                    <p>Developed with Claude Code</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- API Client (load first) -->
+    <script src="js/api-client.js?v=11"></script>
+
+    <!-- Application Scripts -->
+    <script src="js/data.js?v=8"></script>
+    <script src="js/auth.js?v=11"></script>
+    <script src="js/register.js?v=8"></script>
+    <script src="js/statements.js?v=8"></script>
+    <script src="js/official-statement.js?v=8"></script>
+    <script src="js/consolidated-statement.js?v=8"></script>
+    <script src="js/app.js?v=8"></script>
+    <script src="js/admin.js?v=12"></script>
+    <script src="js/admin-service-requests.js?v=1"></script>
+    <script src="js/features.js?v=8"></script>
+    <script src="js/payments.js?v=8"></script>
+</body>
+</html>

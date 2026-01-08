@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Shield background -->
+  <path d="M32 4 L58 16 L58 38 Q58 50 32 60 Q6 50 6 38 L6 16 Z"
+        fill="#000428" stroke="#002855" stroke-width="2"/>
+
+  <!-- Sun symbol -->
+  <circle cx="32" cy="24" r="8" fill="#FFB81C"/>
+
+  <!-- Mountain -->
+  <polygon points="16,42 24,32 32,37 40,30 48,42"
+           fill="#4A7C59"/>
+
+  <!-- Town building -->
+  <rect x="28" y="38" width="8" height="6" fill="#FFFFFF"/>
+  <polygon points="32,36 26,40 38,40" fill="#FFFFFF"/>
+</svg>
